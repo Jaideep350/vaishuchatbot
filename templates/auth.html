@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sign in — Wanderly</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body class="centered">
+<div class="card auth-card">
+  <h1>Wanderly</h1>
+  <p class="muted">Sign in to save your favourite places.</p>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="login">Sign in</button>
+    <button class="tab" data-tab="signup">Create account</button>
+  </div>
+
+  <form id="authForm" class="auth-form">
+    <label>Email
+      <input type="email" name="email" required />
+    </label>
+    <label>Password
+      <input type="password" name="password" minlength="6" required />
+    </label>
+    <button class="btn btn-primary" type="submit" id="authSubmit">Sign in</button>
+    <p id="authError" class="error"></p>
+  </form>
+
+  <a href="/" class="muted small">← Back to app</a>
+</div>
+<script src="{{ url_for('static', filename='auth.js') }}"></script>
+</body>
+</html>

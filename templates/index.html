@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Wanderly — AI travel guide</title>
+<meta name="description" content="Wanderly: an AI-powered local tour guide that finds places, draws them on a map, and saves your favourites." />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-dot"></span>
+    <h1>Wanderly</h1>
+    <span class="brand-tag">Your AI local tour guide</span>
+  </div>
+  <nav class="auth-nav" id="authNav">
+    {% if logged_in %}
+      <span class="user-chip">{{ user_email }}</span>
+      <button id="logoutBtn" class="btn btn-ghost">Sign out</button>
+    {% else %}
+      <a href="/auth" class="btn btn-primary">Sign in</a>
+    {% endif %}
+  </nav>
+</header>
+
+<main class="layout">
+  <!-- Chat -->
+  <section class="card chat">
+    <div class="chat-header">
+      <div class="avatar">✨</div>
+      <div>
+        <p class="chat-title">Wanderly</p>
+        <p class="chat-sub">Your AI local tour guide</p>
+      </div>
+      <span class="online">● Online</span>
+    </div>
+
+    <div class="focus-bar">
+      <span class="focus-label">🌍 Guiding you in:</span>
+      <span class="focus-chip" id="focusChip">Any city</span>
+      <select id="focusSelect" class="focus-select">
+        <option value="">Quick pick…</option>
+        <option>Any city</option>
+        <option>Paris</option><option>Tokyo</option><option>Kyoto</option>
+        <option>Bangkok</option><option>Lisbon</option><option>Rome</option>
+        <option>Barcelona</option><option>New York</option>
+        <option>Istanbul</option><option>Goa</option><option>Bali</option>
+      </select>
+    </div>
+
+    <div id="messages" class="messages">
+      <div class="empty">
+        <h2 id="emptyTitle">Where shall we wander today?</h2>
+        <p id="emptySub">Pick a city above or just ask — landmarks, food, itineraries, hidden gems.</p>
+        <div class="suggestions" id="suggestions"></div>
+      </div>
+    </div>
+
+    <form id="chatForm" class="chat-form">
+      <input id="chatInput" placeholder="Ask about a city, dish, or itinerary…" autocomplete="off" />
+      <button type="submit" class="btn btn-primary">➤</button>
+    </form>
+  </section>
+
+  <!-- Map + favourites -->
+  <aside class="side">
+    <div class="card map-card">
+      <h3>Places on the map</h3>
+      <div id="map"></div>
+    </div>
+    <div class="card favs-card">
+      <h3>Favourites <span id="favCount" class="muted">0</span></h3>
+      <div id="favList" class="fav-list">
+        {% if not logged_in %}
+          <p class="muted">Sign in to save places.</p>
+        {% endif %}
+      </div>
+    </div>
+  </aside>
+</main>
+
+<script>
+  window.WANDERLY = { loggedIn: {{ 'true' if logged_in else 'false' }} };
+</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

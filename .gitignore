@@ -1,0 +1,23 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment variables
+.env
+
+# Database
+# If you want to push your database, comment this out
+wanderly.db
+*.sqlite3
+
+# IDEs
+.vscode/
+.idea/
