@@ -222,35 +222,25 @@ def chat():
 # ---------- Routes: place image generation ----------
 @app.post("/api/place-image")
 def place_image():
-    if not LOVABLE_API_KEY:
-        return jsonify({"error": "LOVABLE_API_KEY not set"}), 500
     d = request.get_json(force=True)
     name = d.get("name", "")
-    city = d.get("city", "")
-    prompt = (
-        f"A beautiful, realistic travel photograph of {name}"
-        f"{' in ' + city if city else ''}. "
-        "Bright daylight, vivid colors, professional travel photography style, no text overlay."
-    )
-    payload = {
-        "model": "google/gemini-2.5-flash-image",
-        "messages": [{"role": "user", "content": prompt}],
-        "modalities": ["image", "text"],
-    }
-    headers = {
-        "Authorization": f"Bearer {LOVABLE_API_KEY}",
-        "Content-Type": "application/json",
-    }
-    r = requests.post(AI_ENDPOINT, json=payload, headers=headers, timeout=120)
-    if r.status_code != 200:
-        return jsonify({"error": r.text}), 500
-    j = r.json()
+    if not name:
+        return jsonify({"error": "No name provided"}), 400
+    
+    import urllib.parse
+    url = f"https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original&titles={urllib.parse.quote(name)}"
+    headers = {"User-Agent": "WanderlyBot/1.0"}
     try:
-        images = j["choices"][0]["message"].get("images", [])
-        if images:
-            return jsonify({"image": images[0]["image_url"]["url"]})
-    except (KeyError, IndexError):
+        r = requests.get(url, headers=headers, timeout=10)
+        if r.status_code == 200:
+            data = r.json()
+            pages = data.get("query", {}).get("pages", {})
+            for page_id, page_data in pages.items():
+                if "original" in page_data:
+                    return jsonify({"image": page_data["original"]["source"]})
+    except Exception as e:
         pass
+
     return jsonify({"error": "No image returned"}), 500
 
 if __name__ == "__main__":
