@@ -228,7 +228,8 @@ def place_image():
         return jsonify({"error": "No name provided"}), 400
     
     import urllib.parse
-    url = f"https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original&titles={urllib.parse.quote(name)}"
+    # Use Wikipedia Search API instead of exact titles to significantly improve image matches
+    url = f"https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch={urllib.parse.quote(name)}&gsrlimit=1&prop=pageimages&format=json&piprop=original"
     headers = {"User-Agent": "WanderlyBot/1.0"}
     try:
         r = requests.get(url, headers=headers, timeout=10)
