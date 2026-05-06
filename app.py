@@ -190,7 +190,17 @@ client = OpenAI(
 @app.post("/api/chat")
 def chat():
     data = request.get_json(force=True)
-    messages = data.get("messages", [])
+    incoming_messages = data.get("messages", [])
+    
+    # Prepend the system prompt
+    messages = [{"role": "system", "content": SYSTEM_PROMPT_BASE}]
+    
+    # Map frontend 'ai' role to 'assistant' for the API
+    for msg in incoming_messages:
+        role = msg.get("role")
+        if role == "ai":
+            role = "assistant"
+        messages.append({"role": role, "content": msg.get("content", "")})
 
     def generate():
         try:
