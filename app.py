@@ -15,6 +15,10 @@ import sqlite3
 import base64
 import secrets
 from functools import wraps
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from flask import (
     Flask, render_template, request, jsonify, session,
     redirect, url_for, Response, stream_with_context, g
@@ -178,14 +182,10 @@ SYSTEM_PROMPT_BASE = (
 
 from openai import OpenAI
 
-# Reconstructing key to avoid GitHub Secret Scanner from blocking the push
-_p1 = "sk-proj-j32Nsy9QNy5bUBvf5gCt9zMsNPTdyfNG"
-_p2 = "wE1n2fTff8f0AH9birpdImNa4qj1OZoDND9NX6z"
-_p3 = "vbYT3BlbkFJJXzB8jywWghK2pBvMeTjfJTeLs4"
-_p4 = "AuY9YWF9HKWICUplmyIEVmhINIFD7RTgUFxC"
-_p5 = "2jFbXL12zAA"
-
-client = OpenAI(api_key=_p1 + _p2 + _p3 + _p4 + _p5)
+client = OpenAI(
+    api_key=os.environ.get("OPENAI_API_KEY"),
+    base_url="https://api.groq.com/openai/v1"
+)
 
 @app.post("/api/chat")
 def chat():
@@ -195,7 +195,7 @@ def chat():
     def generate():
         try:
             stream = client.chat.completions.create(
-                model="gpt-4o-mini",
+                model="llama-3.1-8b-instant",
                 messages=messages,
                 stream=True
             )
